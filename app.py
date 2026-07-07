@@ -25,11 +25,6 @@ with st.sidebar:
         menu_title=None,
         options=[
             "Chat",
-            "Summarize",
-            "Key Points",
-            "Quiz",
-            "Compare",
-            "Settings"
         ],
         icons=[
             "chat-dots",
