@@ -3,12 +3,13 @@ import streamlit as st
 from chatbot import ask_question
 from utils import build_chat_history, format_sources
 from services.upload_service import index_uploaded_files
+from services.document_service import get_uploaded_documents
 
 
 def chat_page():
     st.title("💬 Chat with Documents")
 
-    with st.expander("📂 Upload & Index PDFs", expanded=False):
+    with st.expander("📂 Upload & Index PDFs", expanded=True):
         uploaded_files = st.file_uploader(
             "Upload PDF documents",
             type=["pdf"],
@@ -20,10 +21,32 @@ def chat_page():
                 with st.spinner("Indexing uploaded PDFs..."):
                     chunks_count = index_uploaded_files(uploaded_files)
 
-                st.success(f"Indexed successfully! Created {chunks_count} chunks.")
+                if chunks_count == 0:
+                    st.warning("No new documents indexed. These files may already exist.")
+                else:
+                    st.success(f"Indexed successfully! Created {chunks_count} chunks.")
+
                 st.session_state.messages = []
                 st.cache_resource.clear()
                 st.rerun()
+
+    st.subheader("📚 Uploaded Documents")
+
+    documents = get_uploaded_documents()
+
+    if documents:
+        for doc in documents:
+            st.markdown(f"✅ `{doc}`")
+
+        selected_document = st.selectbox(
+            "🔍 Search In",
+            ["All Documents"] + documents,
+        )
+    else:
+        st.info("No documents uploaded yet.")
+        selected_document = "All Documents"
+
+    st.divider()
 
     if "messages" not in st.session_state:
         st.session_state.messages = []
@@ -32,10 +55,12 @@ def chat_page():
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
 
-    question = st.chat_input("Ask something about your document...")
+    question = st.chat_input("Ask something about your documents...")
 
     if question:
-        st.session_state.messages.append({"role": "user", "content": question})
+        st.session_state.messages.append(
+            {"role": "user", "content": question}
+        )
 
         with st.chat_message("user"):
             st.markdown(question)
@@ -44,7 +69,11 @@ def chat_page():
 
         with st.chat_message("assistant"):
             with st.spinner("Thinking..."):
-                answer, docs = ask_question(question, history)
+                answer, docs = ask_question(
+                    question,
+                    history,
+                    selected_document
+                )
 
             st.markdown(answer)
 
@@ -63,7 +92,9 @@ def chat_page():
 """
                     )
 
-        st.session_state.messages.append({"role": "assistant", "content": answer})
+        st.session_state.messages.append(
+            {"role": "assistant", "content": answer}
+        )
 
 
 def summarize_page():

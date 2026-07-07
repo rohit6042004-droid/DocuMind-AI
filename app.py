@@ -1,5 +1,21 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
+import os
+import shutil
+
+from config import UPLOAD_FOLDER, VECTORSTORE_PATH
+
+
+def clear_previous_session():
+    if "session_cleared" not in st.session_state:
+        if os.path.exists(UPLOAD_FOLDER):
+            shutil.rmtree(UPLOAD_FOLDER)
+            os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+        if os.path.exists(VECTORSTORE_PATH):
+            shutil.rmtree(VECTORSTORE_PATH)
+
+        st.session_state.session_cleared = True
 
 from pages import (
     chat_page,
@@ -15,6 +31,7 @@ st.set_page_config(
     page_icon="🤖",
     layout="wide"
 )
+clear_previous_session()
 
 with st.sidebar:
     st.title("🤖 DocuMind AI")
