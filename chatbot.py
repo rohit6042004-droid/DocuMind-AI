@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 
 from langchain_community.vectorstores import FAISS
-from langchain_ollama import OllamaEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -20,7 +20,7 @@ from services.reranker import rerank_documents
 
 load_dotenv()
 
-embeddings = OllamaEmbeddings(model=EMBEDDING_MODEL)
+embeddings = GoogleGenerativeAIEmbeddings(model=EMBEDDING_MODEL)
 
 llm = ChatGroq(
     model=LLM_MODEL,

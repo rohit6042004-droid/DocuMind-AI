@@ -2,7 +2,7 @@ import os
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
-from langchain_ollama import OllamaEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
 from config import DATA_FOLDER, VECTORSTORE_PATH, EMBEDDING_MODEL, CHUNK_SIZE, CHUNK_OVERLAP
 
@@ -37,7 +37,7 @@ chunks = splitter.split_documents(documents)
 
 print(f"Created {len(chunks)} chunks.")
 
-embeddings = OllamaEmbeddings(model=EMBEDDING_MODEL)
+embeddings = GoogleGenerativeAIEmbeddings(model=EMBEDDING_MODEL)
 
 vectorstore = FAISS.from_documents(chunks, embeddings)
 
