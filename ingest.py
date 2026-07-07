@@ -2,8 +2,7 @@ import os
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
-
+from langchain_huggingface import HuggingFaceEmbeddings
 from config import DATA_FOLDER, VECTORSTORE_PATH, EMBEDDING_MODEL, CHUNK_SIZE, CHUNK_OVERLAP
 
 documents = []
@@ -37,7 +36,11 @@ chunks = splitter.split_documents(documents)
 
 print(f"Created {len(chunks)} chunks.")
 
-embeddings = GoogleGenerativeAIEmbeddings(model=EMBEDDING_MODEL)
+embeddings = HuggingFaceEmbeddings(
+    model_name="BAAI/bge-small-en-v1.5",
+    model_kwargs={"device": "cpu"},
+    encode_kwargs={"normalize_embeddings": True},
+)
 
 vectorstore = FAISS.from_documents(chunks, embeddings)
 

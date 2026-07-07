@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 
 from langchain_community.vectorstores import FAISS
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -20,8 +20,11 @@ from services.reranker import rerank_documents
 
 load_dotenv()
 
-embeddings = GoogleGenerativeAIEmbeddings(model=EMBEDDING_MODEL)
-
+embeddings = HuggingFaceEmbeddings(
+    model_name="BAAI/bge-small-en-v1.5",
+    model_kwargs={"device": "cpu"},
+    encode_kwargs={"normalize_embeddings": True},
+)
 llm = ChatGroq(
     model=LLM_MODEL,
     temperature=TEMPERATURE

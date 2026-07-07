@@ -3,7 +3,7 @@ import os
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
-from langchain_ollama import OllamaEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 
 from config import (
     UPLOAD_FOLDER,
@@ -46,9 +46,11 @@ def index_uploaded_files(uploaded_files):
 
     chunks = splitter.split_documents(documents)
 
-    embeddings = OllamaEmbeddings(
-        model=EMBEDDING_MODEL
-    )
+    embeddings = HuggingFaceEmbeddings(
+    model_name="BAAI/bge-small-en-v1.5",
+    model_kwargs={"device": "cpu"},
+    encode_kwargs={"normalize_embeddings": True},
+)
 
     vectorstore = FAISS.from_documents(
         chunks,
