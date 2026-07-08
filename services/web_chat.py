@@ -1,22 +1,22 @@
-from langchain_ollama import ChatOllama
+import os
+from groq import Groq
 
-llm = ChatOllama(model="llama3.2")
+client = Groq(api_key=os.environ["GROQ_API_KEY"])
 
 def ask_web_question(question, history=""):
-    prompt = f"""
-You are DocuMind AI.
+    response = client.chat.completions.create(
+        model="llama-3.1-8b-instant",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are DocuMind AI. Answer clearly and helpfully."
+            },
+            {
+                "role": "user",
+                "content": f"Chat history:\n{history}\n\nQuestion:\n{question}"
+            }
+        ],
+        temperature=0.3
+    )
 
-Answer the user's question clearly and helpfully.
-
-If the question needs latest/current information, say:
-"Live web search is not enabled yet."
-
-Chat history:
-{history}
-
-User question:
-{question}
-"""
-
-    response = llm.invoke(prompt)
-    return response.content
+    return response.choices[0].message.content
