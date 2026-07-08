@@ -6,6 +6,7 @@ from chatbot import ask_question
 from utils import build_chat_history, format_sources
 from services.upload_service import index_uploaded_files
 from services.document_service import get_uploaded_documents
+from services.delete_service import clear_documents
 
 try:
     from config import UPLOAD_FOLDER
@@ -402,6 +403,12 @@ with left:
     if documents:
         for doc in documents:
             doc_card(doc)
+
+        if st.button("🗑 Remove All Documents", use_container_width=True):
+            clear_documents()
+            st.session_state.messages = []
+            st.cache_resource.clear()
+            st.rerun()
 
         selected_document = st.selectbox(
             "Search in",
