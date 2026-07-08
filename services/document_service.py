@@ -17,7 +17,7 @@ def clear_documents():
 
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
     def clear_documents():
-    import os
+     import os
     import shutil
     from config import UPLOAD_FOLDER
 
